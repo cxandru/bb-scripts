@@ -24,7 +24,7 @@ set -e
 PATH="${PATH}:${MYDIR}"
 
 if [ "$1" == "-c" ]; then
-    for ta in "${!email[@]}"; do
+    for ta in "${!name[@]}"; do
 	echo "Removing $ta"
 	rm -r $ta || continue
     done
@@ -32,7 +32,7 @@ if [ "$1" == "-c" ]; then
 fi
 
 # first check whether the working dir is clean
-for ta in "${!email[@]}"; do
+for ta in "${!name[@]}"; do
         if [ -d "$ta" ]; then
                 echo "$ta exists. Clean up first (Can be done by calling this script with -c as arg)."
                 exit
@@ -50,12 +50,12 @@ echo Doing a rough plagiarism check
 
 echo
 
-test "${!email[*]}"
+test "${!name[*]}"
 declare -A ballot
 
 # since identify.sh identified groups: see if these match the names of TA's
 # and move assignments there...
-for ta in "${!email[@]}"; do
+for ta in "${!name[@]}"; do
     mkdir -p ".$ta"
     progbar=""
     for file in */"#group:$ta"; do
@@ -72,7 +72,7 @@ for ta in "${!email[@]}"; do
 done
 
 unveil_ta() {
-    for ta in "${!email[@]}"; do mv ".$ta" "$ta"; done
+    for ta in "${!name[@]}"; do mv ".$ta" "$ta"; done
 }
 
 dirs=(*/)
@@ -83,5 +83,7 @@ if [ "${#ballot[@]}" -gt 0 ]; then
 else
     #fallback: if all TA's are assigned to groups, then all of them are also in the lottery
     unveil_ta
-    "$MYDIR"/hak3.sh "${!email[@]}"
+    "$MYDIR"/hak3.sh "${!name[@]}"
 fi
+
+"$MYDIR"/name.sh .
